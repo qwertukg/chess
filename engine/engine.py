@@ -12,15 +12,8 @@ from neural.mini_az import MiniAZ
 from mcts.mcts import MCTS
 from self_play.training import play_self_game, train_on_batch
 from self_play.sample import Sample
-from utils import (
-    DEVICE,
-    DEFAULT_SIMS,
-    REPLAY_CAP,
-    WEIGHTS_FILE,
-    normalize_fen,
-    seed_everything,
-    index_to_move,
-)
+from config import DEVICE, DEFAULT_SIMS, REPLAY_CAP, WEIGHTS_FILE
+from utils import normalize_fen, seed_everything, index_to_move
 
 log = logging.getLogger(__name__)
 

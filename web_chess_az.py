@@ -8,7 +8,8 @@ import chess
 from flask import Flask, request, jsonify, Response
 
 from engine.engine import Engine
-from utils import DEVICE, seed_val
+from config import DEVICE
+from utils import seed_val
 
 # ------------------------------ Логирование --------------------------------
 logging.basicConfig(

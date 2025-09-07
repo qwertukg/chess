@@ -8,8 +8,8 @@ import chess
 
 from neural.mini_az import MiniAZ
 from mcts.mcts import MCTS
-from utils import (DEVICE, MAX_MOVES, TEMP_FIRST_MOVES, board_to_planes,
-                   index_to_move)
+from config import DEVICE, MAX_MOVES, TEMP_FIRST_MOVES
+from utils import board_to_planes, index_to_move
 from .sample import Sample
 
 
