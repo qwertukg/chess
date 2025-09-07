@@ -447,13 +447,14 @@ class Engine:
 
             log.info(f"[train] game {g} done in {time.time() - gt0:.2f}s")
 
+            # сохраняем веса после каждой self-play партии
+            try:
+                torch.save(self.net.state_dict(), WEIGHTS_FILE)
+                log.info(f"[train] saved weights after game {g} -> {WEIGHTS_FILE}")
+            except Exception as e:
+                log.error(f"[train] save after game {g} failed: {e}")
+
         dt = time.time() - t0
-        # сохраним веса
-        try:
-            torch.save(self.net.state_dict(), WEIGHTS_FILE)
-            log.info(f"[train] saved weights -> {WEIGHTS_FILE}")
-        except Exception as e:
-            log.error(f"[train] save failed: {e}")
 
         n = max(1, games)
         avg_loss = loss_sum / n
