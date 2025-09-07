@@ -31,8 +31,25 @@ log = logging.getLogger("web_chess_az")
 
 # ------------------------------ Конфигурация -------------------------------
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu"); log.info(f"torch.device = {DEVICE}")
-SEED = 42
-random.seed(SEED); np.random.seed(SEED); torch.manual_seed(SEED)
+
+
+def seed_everything(seed: int | None = None) -> int:
+    """Seed Python, NumPy and torch RNGs.
+
+    If ``seed`` is ``None`` a seed derived from current time is used.
+    The value actually used is returned so it can be logged.
+    """
+    if seed is None:
+        seed = int(time.time()) & 0xFFFFFFFF
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    return seed
+
+
+# установить стартовое зерно один раз при запуске
+seed_val = seed_everything()
+log.info(f"Initial RNG seed = {seed_val}")
 
 WEIGHTS_FILE = "mini_az_web.pt"
 REPLAY_CAP = 2048      # буфер повторов
@@ -391,7 +408,12 @@ class Engine:
         sims = int(max(16, sims))
         self.sims = sims
         t0 = time.time()
-        log.info(f"[train] start | games={games} sims={sims} replay_cap={self.replay.maxlen} device={DEVICE}")
+        # использовать новое случайное зерно при каждой тренировке
+        seed = seed_everything()
+        log.info(
+            f"[train] start | seed={seed} games={games} sims={sims} "
+            f"replay_cap={self.replay.maxlen} device={DEVICE}"
+        )
 
         gpos = 0
         loss_sum = lp_sum = lv_sum = 0.0
