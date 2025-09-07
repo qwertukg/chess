@@ -7,18 +7,7 @@ import numpy as np
 import chess
 import torch
 
-# ------------------------------ Конфигурация -------------------------------
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-WEIGHTS_FILE = "mini_az_web.pt"
-REPLAY_CAP = 2048      # буфер повторов
-DEFAULT_SIMS = 96      # число MCTS-симуляций на ход (можно менять в UI)
-TEMP_FIRST_MOVES = 10  # сколько первых ходов использовать температуру=1.0
-MAX_MOVES = 90         # лимит длины партии в self-play
-
-# --------------------------- Представление позиции -------------------------
-# 12 плоскостей фигур + 1 (чей ход) + 4 рокировки + 1 полуходы до ничьей
-PLANES = 12 + 1 + 4 + 1
-POLICY_SIZE = 64 * 64 * 5  # (from64 * to64 * промо {-,Q,R,B,N})
+from config import PLANES
 
 def seed_everything(seed: int | None = None) -> int:
     """Seed Python, NumPy and torch RNGs.

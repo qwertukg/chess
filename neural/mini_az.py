@@ -2,7 +2,7 @@
 import torch.nn as nn
 import torch.nn.functional as F
 
-from utils import PLANES, POLICY_SIZE
+from config import PLANES, POLICY_SIZE
 from .res_block import ResBlock
 
 
