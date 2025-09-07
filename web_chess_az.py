@@ -338,6 +338,14 @@ class Engine:
         self.player_is_white = True                # кто человек
         self.sims = DEFAULT_SIMS
         self.lock = threading.Lock()
+        # накопительная статистика по тренировкам
+        self.total_games = 0
+        self.total_samples = 0
+        self.total_time = 0.0
+        self.total_loss = 0.0
+        self.total_policy_loss = 0.0
+        self.total_value_loss = 0.0
+        self.total_sims = 0.0
         # попытка загрузить веса
         try:
             sd = torch.load(WEIGHTS_FILE, map_location=DEVICE)
@@ -452,11 +460,24 @@ class Engine:
         avg_lp = lp_sum / n
         avg_lv = lv_sum / n
         log.info(f"[train] done | games={games} samples={gpos} sims={sims} | avg_loss={avg_loss:.4f} | avg_policy={avg_lp:.4f} | avg_value={avg_lv:.4f} | time={dt:.2f}s")
+        # обновляем накопительную статистику
+        self.total_games += games
+        self.total_samples += gpos
+        self.total_time += dt
+        self.total_loss += avg_loss * games
+        self.total_policy_loss += avg_lp * games
+        self.total_value_loss += avg_lv * games
+        self.total_sims += sims * games
 
+        tot_games = max(1, self.total_games)
         return {
-            "games": games, "samples": gpos, "sims": sims,
-            "loss": avg_loss, "policy_loss": avg_lp, "value_loss": avg_lv,
-            "time_sec": dt
+            "games": self.total_games,
+            "samples": self.total_samples,
+            "sims": self.total_sims / tot_games,
+            "loss": self.total_loss / tot_games,
+            "policy_loss": self.total_policy_loss / tot_games,
+            "value_loss": self.total_value_loss / tot_games,
+            "time_sec": self.total_time
         }
 
 
@@ -709,7 +730,6 @@ document.getElementById('btnAI').addEventListener('click', async ()=>{
 });
 
 document.getElementById('btnTrain').addEventListener('click', async ()=>{
-  clearStorage();
   setMessage('Тренировка запущена...');
   setStats(null);
   const games = Number(document.getElementById('games').value || 2);
