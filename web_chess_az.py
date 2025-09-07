@@ -597,8 +597,17 @@ function toPieceFEN(fen){
   const sp = fen.trim().split(/\s+/);
   return sp[0] || 'start';
 }
+function clearStorage(){
+  try{
+    localStorage.removeItem('az_stats');
+    localStorage.removeItem('az_msg');
+  }catch(e){/* ignore */}
+}
 
-function setMessage(s){ document.getElementById('msg').textContent = s; }
+function setMessage(s){
+  document.getElementById('msg').textContent = s;
+  try{ localStorage.setItem('az_msg', s); }catch(e){/* ignore */}
+}
 
 function setStats(obj){
   const el = document.getElementById('stats');
@@ -678,6 +687,7 @@ document.getElementById('btnAI').addEventListener('click', async ()=>{
 });
 
 document.getElementById('btnTrain').addEventListener('click', async ()=>{
+  clearStorage();
   setMessage('Тренировка запущена...');
   setStats(null);
   const games = Number(document.getElementById('games').value || 2);
@@ -686,15 +696,26 @@ document.getElementById('btnTrain').addEventListener('click', async ()=>{
     body: JSON.stringify({games: games, sims: sims})}).then(r=>r.json());
   if(!j.ok){ setMessage('Ошибка тренировки'); return; }
   setStats(j.stats);
+  try{ localStorage.setItem('az_stats', JSON.stringify(j.stats)); }catch(e){/* ignore */}
   setMessage('Готово.');
 });
 
 window.addEventListener('load', async function boot(){
   playerColor = document.getElementById('color').value;
   promotion   = document.getElementById('promotion').value;
+  try{
+    const s = localStorage.getItem('az_stats');
+    if(s){ setStats(JSON.parse(s)); }
+  }catch(e){/* ignore */}
+  let msg = null;
+  try{ msg = localStorage.getItem('az_msg'); }catch(e){/* ignore */}
+  if(msg){ setMessage(msg); }
   initBoard('start', playerColor);
   await refreshBoard();
 });
+
+const resetBtn = document.getElementById('btnReset');
+if(resetBtn){ resetBtn.addEventListener('click', clearStorage); }
 </script>
 </body>
 </html>
