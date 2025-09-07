@@ -617,8 +617,8 @@ INDEX_HTML = r"""
 
     <label>Самообучение</label>
     <div class="row">
-      <input id="games" type="number" min="1" max="50" value="2"/><span class="small">игр</span>
-      <input id="sims" type="number" min="16" max="1024" value="96"/><span class="small">симуляций/ход</span>
+      <input id="games" type="number" min="1" max="50" value="2" placeholder="1:50"/><span class="small">игр</span>
+      <input id="sims" type="number" min="16" max="1024" value="96" placeholder="16:1024"/><span class="small">симуляций/ход</span>
       <button id="btnTrain">Тренировать</button>
     </div>
 
